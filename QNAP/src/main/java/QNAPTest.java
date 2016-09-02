@@ -1,4 +1,3 @@
-import com.mashape.unirest.http.Unirest;
 
 /**
  * Created by Lorenzo on 02/09/2016.
