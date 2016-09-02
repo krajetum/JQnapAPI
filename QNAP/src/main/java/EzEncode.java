@@ -110,4 +110,9 @@ public class EzEncode {
         }
         return out;
     }
+
+    String encode(String string){
+        return ezEncode(utf8to16(string));
+    }
+
 }
