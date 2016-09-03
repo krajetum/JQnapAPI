@@ -1,3 +1,5 @@
+package com.krajetum.jqnap;
+
 /**
  *  Disclaimer:
  *  This class is the result of a porting from a javascript script made by QNAP
