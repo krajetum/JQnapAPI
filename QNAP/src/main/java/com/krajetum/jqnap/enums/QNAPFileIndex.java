@@ -1,8 +1,5 @@
 package com.krajetum.jqnap.enums;
 
-/**
- * Created by Lorenzo on 03/09/2016.
- */
 public interface QNAPFileIndex {
 
     String FILENAME = "filename";

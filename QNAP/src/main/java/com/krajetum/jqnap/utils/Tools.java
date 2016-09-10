@@ -1,8 +1,5 @@
 package com.krajetum.jqnap.utils;
 
-/**
- * Created by Lorenzo on 10/09/2016.
- */
 public class Tools {
 
     public static String byteToString(long bytes, boolean si) {

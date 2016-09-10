@@ -1,8 +1,5 @@
 package com.krajetum.jqnap.objects;
 
-/**
- * Created by Lorenzo on 10/09/2016.
- */
 public class QNAPResponse {
 
     private int status;
@@ -18,6 +15,7 @@ public class QNAPResponse {
             case 1:return "OK";
             case 2:return "File Exists";
             case 4:return "Permission Denied";
+            case 9:return "Quota Limit Exceeded";
             default:return "Error";
         }
     }

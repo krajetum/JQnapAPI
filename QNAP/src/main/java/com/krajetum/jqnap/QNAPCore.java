@@ -291,7 +291,49 @@ public class QNAPCore {
         return null;
     }
 
+    public File getImageThumbnail(String path, String filename, int size){
+        try {
+            if(sid!=null){
+                HttpResponse<InputStream> jsonResponse = Unirest.post("http://" + host + "/cgi-bin/filemanager/utilRequest.cgi?func=get_thumb&sid=" + getSid()+
+                                                                        "&path="+path+"&name="+filename+"&size="+size).asBinary();
+                // write the inputStream to a FileOutputStream
+                final File tempFile = File.createTempFile(PREFIX, SUFFIX);
+                tempFile.deleteOnExit();
+                FileOutputStream out = new FileOutputStream(tempFile);
+                IOUtils.copy(jsonResponse.getBody(), out);
+                return tempFile;
+            }
+            else{
+                logger.log(Level.SEVERE, "Error: you must login first");
+            }
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public QNAPResponse uploadFile(String destPath, File file,boolean overwrite){
+        try {
+            if(sid!=null){
+                HttpResponse<JsonNode> jsonResponse = Unirest.post("http://" + host + "/cgi-bin/filemanager/utilRequest.cgi?func=upload&type=standard&sid="+getSid()+
+                                                                    "&dest_path="+destPath+"&overwrite="+(overwrite?1:0)).field("progress", file.getAbsolutePath().replace("/", "-")).asJson();
 
 
+
+
+
+            }
+            else{
+                logger.log(Level.SEVERE, "Error: you must login first");
+            }
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }
