@@ -16,7 +16,7 @@ public class QNAPTest {
 
     public static void main(String argv[]){
         QNAPCore core = new QNAPCore("192.168.1.240", 8080);
-        if(core.login("krajetum", "hacker96")) {
+        if(core.login("krajetum", "*****")) {
             File downloadFile = core.downloadFile("/Public", "test.txt", true);
             try {
                 FileUtils.copyFile(downloadFile, new File("D:\\Film\\file.zip"));
