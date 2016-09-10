@@ -1,4 +1,4 @@
-package com.krajetum.jqnap;
+package com.krajetum.jqnap.utils;
 
 /**
  *  Disclaimer:
@@ -112,8 +112,7 @@ public class EzEncode {
         }
         return out;
     }
-
-    String encode(String string){
+    public String encode(String string){
         return ezEncode(utf8to16(string));
     }
 

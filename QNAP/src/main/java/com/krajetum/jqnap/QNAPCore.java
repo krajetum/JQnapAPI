@@ -1,11 +1,21 @@
 package com.krajetum.jqnap;
 
+import com.krajetum.jqnap.enums.QNAPFileIndex;
+import com.krajetum.jqnap.enums.QNAPFolderIndex;
+import com.krajetum.jqnap.objects.QNAPFile;
+import com.krajetum.jqnap.objects.QNAPFolder;
+import com.krajetum.jqnap.objects.VideoType;
+import com.krajetum.jqnap.utils.EzEncode;
+import com.krajetum.jqnap.utils.Tools;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +44,7 @@ public class QNAPCore {
             int status = jsonResponse.getBody().getObject().getInt("status");
             if(status==1){
                 sid = jsonResponse.getBody().getObject().getString("sid");
+                logger.info("Logged in successfully");
                 return true;
             }else{
                 logger.warning("Could not login. Check your username and password");
@@ -62,19 +73,27 @@ public class QNAPCore {
     }
 
     public String getSid(){
-        if(sid!=null)return sid;
+        if(!sid.equals(""))return sid;
         else{
             logger.log(Level.SEVERE, "Error: you must login first");
             return null;
         }
     }
 
-    public void getList(String path){
+    public List<QNAPFolder> getFolderList(String path){
+        List<QNAPFolder> fileList = new ArrayList<QNAPFolder>();
         try {
             if(sid!=null){
-                HttpResponse<JsonNode> jsonResponse = Unirest.post("http://"+host+"/cgi-bin/filemanager/utilRequest.cgi?func=get_tree&amp;sid="+sid+"&amp;is_iso=0&amp;node="+path).asJson();
-                for(int i=0; i<jsonResponse.getBody().getArray().length();i++)
-                    jsonResponse.getBody().getArray().getJSONObject(i).getString("text");
+                HttpResponse<JsonNode> jsonResponse = Unirest.post("http://"+host+"/cgi-bin/filemanager/utilRequest.cgi?func=get_tree&sid="+sid+"&is_iso=0&node="+path).asJson();
+                for(int i=0; i<jsonResponse.getBody().getArray().length();i++) {
+                    JSONObject object = jsonResponse.getBody().getArray().getJSONObject(i);
+                    fileList.add(new QNAPFolder(object.getString(QNAPFolderIndex.TEXT),
+                                              object.getString(QNAPFolderIndex.ID),
+                                              object.getString(QNAPFolderIndex.MODE),
+                                              object.getInt(QNAPFolderIndex.DRAGGABLE),
+                                              object.getString(QNAPFolderIndex.TYPE)));
+                }
+                return fileList;
             }
             else{
                 logger.log(Level.SEVERE, "Error: you must login first");
@@ -82,6 +101,59 @@ public class QNAPCore {
         } catch (UnirestException e) {
             e.printStackTrace();
         }
+        return null;
     }
+
+    public List<QNAPFile> getFileList(String path){
+        List<QNAPFile> fileList = new ArrayList<QNAPFile>();
+        try {
+            if(sid!=null){
+                HttpResponse<JsonNode> jsonResponse = Unirest.post("http://"+host+"/cgi-bin/filemanager/utilRequest.cgi?func=get_list&sid="+sid+"&is_iso=0&list_mode=all&path="+path+"&dir=ASC&limit=20&sort=filename&start=0")
+                                                      .asJson();
+                for(int i=0; i<jsonResponse.getBody().getObject().getJSONArray("datas").length();i++) {
+                    JSONObject object = jsonResponse.getBody().getObject().getJSONArray("datas").getJSONObject(i);
+                    fileList.add(new QNAPFile(  object.getString(QNAPFileIndex.FILENAME),
+                                                object.getInt(QNAPFileIndex.isFolder) == 1,
+                                                object.getDouble(QNAPFileIndex.SIZE),
+                                                object.getInt(QNAPFileIndex.TYPE),
+                                                new VideoType(  object.getInt(QNAPFileIndex.MP4_1080)==1,
+                                                        object.getInt(QNAPFileIndex.MP4_720)==1,
+                                                        object.getInt(QNAPFileIndex.MP4_480)==1,
+                                                        object.getInt(QNAPFileIndex.MP4_360)==1,
+                                                        object.getInt(QNAPFileIndex.MP4_240)==1)
+                                                ));
+                }
+                return fileList;
+            }
+            else{
+                logger.log(Level.SEVERE, "Error: you must login first");
+            }
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public String getFileSize(String path, String filename){
+        try {
+            if(sid!=null){
+                HttpResponse<JsonNode> jsonResponse = Unirest.post("http://"+host+"/cgi-bin/filemanager/utilRequest.cgi?func=get_file_size&sid="+getSid()+"&path="+path+"&total="+1+"&name="+filename)
+                                                        .asJson();
+                JSONObject obj = jsonResponse.getBody().getObject();
+                if(obj.getInt("status")==1){
+                    return Tools.byteToString(obj.getLong("size"),true);
+                }else{
+                    return "Permission Deny";
+                }
+            }
+            else{
+                logger.log(Level.SEVERE, "Error: you must login first");
+            }
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 
 }
