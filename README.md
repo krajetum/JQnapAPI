@@ -16,6 +16,7 @@ You can handle the return value of login in order to check if you are logged in 
 
 ### Logout
 Be sure to logout when you finished all the operations
+
 `core.logout();`
 
 ### Filesystem
