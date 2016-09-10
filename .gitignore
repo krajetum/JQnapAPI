@@ -1,2 +1,7 @@
 .idea
 /QNAP/src/main/java/com/krajetum/jqnap/QNAPTest.java
+QNAP/QNAP.iml
+QNAP/src/main/resources/
+QNAP/src/test/
+QNAP/target/
+QNAP/web/
