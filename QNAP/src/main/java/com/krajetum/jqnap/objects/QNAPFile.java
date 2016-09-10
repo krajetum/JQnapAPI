@@ -2,6 +2,8 @@ package com.krajetum.jqnap.objects;
 
 import com.krajetum.jqnap.utils.Tools;
 
+import javax.tools.Tool;
+
 
 public class QNAPFile {
     private String name;
@@ -9,7 +11,7 @@ public class QNAPFile {
     private String size;
     private int type;
     private VideoType videoType;
-
+    private String creationDate;
     public QNAPFile(String name, boolean isFolder, double size, int type, VideoType videoType){
         this.name = name;
         this.isFolder = isFolder;
@@ -20,6 +22,25 @@ public class QNAPFile {
         }else{
             this.videoType = videoType;
         }
+    }
+    public QNAPFile(String name, boolean isFolder, double size, int type, VideoType videoType, String creationDate){
+        this.name = name;
+        this.isFolder = isFolder;
+        this.size = Tools.byteToString((long)size, true);
+        this.type = type;
+        if(isFolder){
+            this.videoType = new VideoType(false, false, false, false, false);
+        }else{
+            this.videoType = videoType;
+        }
+    }
+
+    public QNAPFile(String name, double size, String creationDate, int type, boolean isFolder) {
+        this.creationDate = creationDate;
+        this.type = type;
+        this.size = Tools.byteToString((long)size, true);
+        this.name = name;
+        this.isFolder = isFolder;
     }
 
     public String getName() {
@@ -53,9 +74,18 @@ public class QNAPFile {
         return videoType;
     }
 
+    public String getCreationDate() {
+        return creationDate;
+    }
+
     @Override
     public String toString(){
-        return "{filename: "+getName()+" ; isFolder: "+isFolder()+" ; size: "+getSize()+" ; type: "+getType()+" ; video_type: "+getVideoType()+"}";
+        if(!creationDate.equals("")){
+            return "{filename: "+getName()+" ; isFolder: "+isFolder()+" ; size: "+getSize()+" ; type: "+getType()+" ; video_type: "+getVideoType()+" ; creation_date: "+creationDate+"}";
+        }else{
+            return "{filename: "+getName()+" ; isFolder: "+isFolder()+" ; size: "+getSize()+" ; type: "+getType()+" ; video_type: "+getVideoType()+"}";
+        }
+
     }
 
 
