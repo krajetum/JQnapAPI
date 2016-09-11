@@ -12,7 +12,9 @@ To get started using JQnap API just initialize the core class of the Project
 
 You can handle the return value of login in order to check if you are logged in and then remove unwanted error in your program
 
-`if(core.login(String user, String pass)){...}`
+    if(core.login(String user, String pass)){
+         ...
+    }
 
 ### Logout
 Be sure to logout when you finished all the operations
@@ -26,10 +28,10 @@ Be sure to logout when you finished all the operations
 `List<QNAPFolder> folderList = core.getFolderList(String path);`
 ###### File and Folder list
 This is a little bit tricky, it return a QNAPFile and inside this class is defined a parameter isFolder that identifies if is a folder or not
-`List<QNAPFile> fileList = getFileList(String path)`
+`List<QNAPFile> fileList = getFileList(String path);`
 
 ###### File and Folder size
-`String getFileSize(String path, String filename)`
+`String getFileSize(String path, String filename);`
 
 
 
